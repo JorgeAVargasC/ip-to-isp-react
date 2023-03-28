@@ -4,7 +4,7 @@ import axios from 'axios'
 
 import CsvDownloadButton from 'react-json-to-csv'
 
-import db from './db.json'
+import db from './dbco.json'
 
 export default function App() {
 
@@ -20,17 +20,6 @@ export default function App() {
       Accept: 'application/json'
     }
   }
-
-  // const db = [
-  //   {
-  //     ip_start: 677003264,
-  //     ip_end: 677003270,
-  //   },
-  //   {
-  //     ip_start: 677003272,
-  //     ip_end: 677003280,
-  //   },
-  // ]
 
   const rget = async (ip) => {
     const config = { ...configBasic, headers: { ...configBasic.headers } }
@@ -59,15 +48,10 @@ export default function App() {
     let array = []
 
     for (let i = 0; i < db.length; i++) {
-      const { ip_start, ip_end } = db[i]
-      for (let ip = ip_start; ip <= ip_end; ip++) {
-        let data = await getISP(ip)
-        if(data?.country_code2 !== 'CO') return
-        array.push({
-          ...data,
-          ip_v4: decimalToIp(ip)
-        })
-      }
+      const { ip_start } = db[i]
+      let {isp} = await getISP(ip_start)
+      console.log(isp)
+      array.push({ ...db[i], isp })
     }
     setResult(array)
   }
@@ -106,7 +90,7 @@ export default function App() {
         </label>
 
       </div> */}
-      {/* {
+      {
         result ? (
           
           <div className="relative w-full rounded-md overflow-x-auto shadow-md sm:rounded-lg">
@@ -129,10 +113,10 @@ export default function App() {
                       result.map((item, index) => (
                         <tr className="bg-slate-800 hover:bg-slate-700 ">
                           <th scope="row" className="px-6 py-2 font-medium whitespace-nowrap">
-                            {item.ip_v4}
+                            {`${item.ip_start} - ${item.ip_end}`}
                           </th>
                           <td className="px-6 py-2">
-                            {item.country_name}
+                            {item.country}
                           </td>
                           <td className="px-6 py-2">
                             {item.isp}
@@ -162,7 +146,7 @@ export default function App() {
             Loading
           </p>
         )
-      } */}
+      }
     </div>
   )
 }
