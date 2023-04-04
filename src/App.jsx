@@ -32,7 +32,7 @@ export default function App() {
   }
 
   const searchIPS = async () => {
-    for (let i = 0; i < db.length; i++) {
+    for (let i = 0; i < 100; i++) {
       const { ip_start } = db[i]
       let {city} = await getISP(ip_start)
       console.log(cont)
