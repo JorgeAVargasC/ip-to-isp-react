@@ -32,17 +32,19 @@ export default function App() {
   }
 
   const searchIPS = async () => {
+    let array = []
     for (let i = 0; i < 100; i++) {
       const { ip_start } = db[i]
       let {city} = await getISP(ip_start)
-      console.log(cont)
       array.push({ ...db[i], city })
     }
     setResult(array)
   }
 
   useEffect(() => {
-    searchIPS()
+    setTimeout(() => {
+      searchIPS()
+    }, 1000)
   }, [])
 
   return (
