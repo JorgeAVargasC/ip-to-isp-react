@@ -10,7 +10,7 @@ export default function App() {
 
   const [result, setResult] = useState(null)
 
-  const API_BASE_URL = 'https://api.iplocation.net'
+  const API_BASE_URL = 'https://ipapi.co'
 
   const configBasic = {
     baseURL: API_BASE_URL,
@@ -27,7 +27,7 @@ export default function App() {
   }
 
   const getISP = async (ip) => {
-    const { data } = await rget(`/?ip=${ip}`)
+    const { data } = await rget(`/${ip}/json`)
     return data
   }
 
@@ -45,15 +45,22 @@ export default function App() {
     // if(e.target.value === '') return setResult(null)
     // const ip = e.target.value
 
+    let delay = 100
+    let cont = 0
     let array = []
 
-    for (let i = 0; i < db.length; i++) {
-      const { ip_start } = db[i]
-      let {isp} = await getISP(ip_start)
-      console.log(isp)
-      array.push({ ...db[i], isp })
-    }
-    setResult(array)
+    setTimeout(async () => {
+      cont % 20 === 0 ? delay = 5000 : delay = 300
+      for (let i = 0; i < db.length; i++) {
+        const { ip_start } = db[i]
+        let {city} = await getISP(ip_start)
+        console.log(cont)
+        array.push({ ...db[i], city })
+      }
+      setResult(array)
+    }, delay)
+
+    cont += 1
   }
 
   useEffect(() => {
@@ -101,11 +108,11 @@ export default function App() {
                             IP
                           </th>
                           <th scope="col" className="px-6 py-3">
-                            COUNTRY
+                            CITY
                           </th>
-                          <th scope="col" className="px-6 py-3">
+                          {/* <th scope="col" className="px-6 py-3">
                             ISP
-                          </th>
+                          </th> */}
                       </tr>
                   </thead>
                   <tbody>
@@ -116,11 +123,11 @@ export default function App() {
                             {`${item.ip_start} - ${item.ip_end}`}
                           </th>
                           <td className="px-6 py-2">
-                            {item.country}
+                            {item.city}
                           </td>
-                          <td className="px-6 py-2">
+                          {/* <td className="px-6 py-2">
                             {item.isp}
-                          </td>
+                          </td> */}
                         </tr>
                       ))
                     }
@@ -131,11 +138,11 @@ export default function App() {
                             IP
                           </th>
                           <th scope="col" className="px-6 py-3">
-                            COUNTRY
+                            CITY
                           </th>
-                          <th scope="col" className="px-6 py-3">
+                          {/* <th scope="col" className="px-6 py-3">
                             ISP
-                          </th>
+                          </th> */}
                       </tr>
                   </tfoot>
               </table>
