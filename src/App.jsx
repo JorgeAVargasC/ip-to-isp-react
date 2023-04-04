@@ -50,7 +50,7 @@ export default function App() {
     let array = []
 
     setTimeout(async () => {
-      cont % 20 === 0 ? delay = 5000 : delay = 300
+      cont % 20 === 0 ? delay = 1000 : delay = 1000
       for (let i = 0; i < db.length; i++) {
         const { ip_start } = db[i]
         let {city} = await getISP(ip_start)
