@@ -31,36 +31,14 @@ export default function App() {
     return data
   }
 
-  function decimalToIp(decimal) {
-    var octetos = [];
-    for (var i = 0; i < 4; i++) {
-      octetos.unshift(decimal % 256);
-      decimal = Math.floor(decimal / 256);
-    }
-    return octetos.join(".");
-  }
-
-
   const searchIPS = async () => {
-    // if(e.target.value === '') return setResult(null)
-    // const ip = e.target.value
-
-    let delay = 100
-    let cont = 0
-    let array = []
-
-    setTimeout(async () => {
-      cont % 20 === 0 ? delay = 1000 : delay = 1000
-      for (let i = 0; i < db.length; i++) {
-        const { ip_start } = db[i]
-        let {city} = await getISP(ip_start)
-        console.log(cont)
-        array.push({ ...db[i], city })
-      }
-      setResult(array)
-    }, delay)
-
-    cont += 1
+    for (let i = 0; i < db.length; i++) {
+      const { ip_start } = db[i]
+      let {city} = await getISP(ip_start)
+      console.log(cont)
+      array.push({ ...db[i], city })
+    }
+    setResult(array)
   }
 
   useEffect(() => {
