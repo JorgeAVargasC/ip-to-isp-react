@@ -4,13 +4,13 @@ import axios from 'axios'
 
 import CsvDownloadButton from 'react-json-to-csv'
 
-import db from './dbco.json'
+import db from './dbipmaxmind.json'
 
 export default function App() {
 
   const [result, setResult] = useState(null)
 
-  const API_BASE_URL = 'https://ipapi.co'
+  const API_BASE_URL = 'https://api.iplocation.net'
 
   const configBasic = {
     baseURL: API_BASE_URL,
@@ -27,24 +27,27 @@ export default function App() {
   }
 
   const getISP = async (ip) => {
-    const { data } = await rget(`/${ip}/json`)
+    const data = await rget(`/?ip=${ip}`)
     return data
   }
 
   const searchIPS = async () => {
     let array = []
-    for (let i = 0; i < 100; i++) {
-      const { ip_start } = db[i]
-      let {city} = await getISP(ip_start)
-      array.push({ ...db[i], city })
-    }
+      for (let i = 0; i < db.length; i++) {
+        const { ip } = db[i]
+        let data = getISP(ip)
+        console.log(data)
+        array.push({ ...db[i], isp })
+      }
     setResult(array)
   }
 
   useEffect(() => {
-    setTimeout(() => {
-      searchIPS()
-    }, 1000)
+    console.log(result)
+  }, [result])
+
+  useEffect(() => {
+    searchIPS()
   }, [])
 
   return (
@@ -55,9 +58,29 @@ export default function App() {
         result ? (
           <CsvDownloadButton data={result} />
         ) : (
-          <p>
-            Loading
-          </p>
+          <div className='w-full h-36 grid place-items-center'>
+            {/* SVG LOADING */}
+            <svg
+              className="animate-spin -ml-1 mr-3 h-36 w-36 text-sky-500"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              ></circle>
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8v8H4z"
+              ></path>
+            </svg>
+          </div>
         )
       }
       
@@ -78,7 +101,7 @@ export default function App() {
 
       </div> */}
       {
-        result ? (
+        result && (
           
           <div className="relative w-full rounded-md overflow-x-auto shadow-md sm:rounded-lg">
               <table className="w-full text-sm text-left ">
@@ -87,51 +110,59 @@ export default function App() {
                           <th scope="col" className="px-6 py-3">
                             IP
                           </th>
-                          <th scope="col" className="px-6 py-3">
+                          {/* <th scope="col" className="px-6 py-3">
                             CITY
                           </th>
-                          {/* <th scope="col" className="px-6 py-3">
-                            ISP
+                          <th scope="col" className="px-6 py-3">
+                            ORG
                           </th> */}
+                          <th scope="col" className="px-6 py-3">
+                            ISP
+                          </th>
                       </tr>
                   </thead>
                   <tbody>
                     {
                       result.map((item, index) => (
                         <tr className="bg-slate-800 hover:bg-slate-700 ">
-                          <th scope="row" className="px-6 py-2 font-medium whitespace-nowrap">
+                          {/* <th scope="row" className="px-6 py-2 font-medium whitespace-nowrap">
                             {`${item.ip_start} - ${item.ip_end}`}
                           </th>
                           <td className="px-6 py-2">
                             {item.city}
                           </td>
-                          {/* <td className="px-6 py-2">
-                            {item.isp}
+                          <td className="px-6 py-2">
+                            {item.org}
                           </td> */}
+                          <td className="px-6 py-2">
+                            {item.ip}
+                          </td>
+                          <td className="px-6 py-2">
+                            {item.isp}
+                          </td>
                         </tr>
                       ))
                     }
                   </tbody>
                   <tfoot className="text-xs text-slate-400 uppercase bg-slate-800">
                       <tr>
-                          <th scope="col" className="px-6 py-3">
+                      <th scope="col" className="px-6 py-3">
                             IP
                           </th>
-                          <th scope="col" className="px-6 py-3">
+                          {/* <th scope="col" className="px-6 py-3">
                             CITY
                           </th>
-                          {/* <th scope="col" className="px-6 py-3">
-                            ISP
+                          <th scope="col" className="px-6 py-3">
+                            ORG
                           </th> */}
+                          <th scope="col" className="px-6 py-3">
+                            ISP
+                          </th>
                       </tr>
                   </tfoot>
               </table>
           </div>
 
-        ) : (
-          <p>
-            Loading
-          </p>
         )
       }
     </div>
